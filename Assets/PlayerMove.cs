@@ -1,8 +1,10 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviourPun
 {
     [SerializeField] private Joystick movementJoystick;
     [SerializeField] private float moveSpeed = 5f;
@@ -13,9 +15,17 @@ public class PlayerMove : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        movementJoystick = FindFirstObjectByType<JoystickFinder>().gameObject.GetComponent<FixedJoystick>();
     }
 
     void Update()
+    {
+        if (photonView.IsMine)
+        {
+            MovePlayer();
+        }
+    }
+    void MovePlayer()
     {
         // Get input from joystick
         float horizontalInput = movementJoystick.Horizontal;
@@ -29,8 +39,18 @@ public class PlayerMove : MonoBehaviour
         {
             transform.rotation = Quaternion.LookRotation(moveDirection);
         }
-    }
 
+    }
+    public void SpeedBoost()
+    {
+        StartCoroutine(SpeedBoostCoroutine());
+    }
+    IEnumerator SpeedBoostCoroutine()
+    {
+        moveSpeed = 20f;
+        yield return new WaitForSeconds(5);
+        moveSpeed = 5f;
+    }
     void FixedUpdate()
     {
         // Apply movement
