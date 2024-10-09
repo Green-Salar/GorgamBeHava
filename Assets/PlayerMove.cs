@@ -6,9 +6,12 @@ public class PlayerMove : MonoBehaviour
 {
     [SerializeField] private Joystick movementJoystick;
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float gravity = 9.81f;
 
     private CharacterController controller;
-    private Vector3 moveDirection;
+    private Vector3 velocity;
+    private bool isJumping = false;
 
     void Start()
     {
@@ -17,26 +20,36 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+
+        bool isGrounded = controller.isGrounded;
+
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
         // Get input from joystick
         float horizontalInput = movementJoystick.Horizontal;
         float verticalInput = movementJoystick.Vertical;
 
         // Calculate move direction
-        moveDirection = new Vector3(horizontalInput, 0f, verticalInput).normalized;
+        Vector3 move = transform.right * horizontalInput + transform.forward * verticalInput;
+        controller.Move(move * moveSpeed * Time.deltaTime);
 
-        // Rotate the player to face the movement direction
-        if (moveDirection != Vector3.zero)
+        if (isJumping && isGrounded)
         {
-            transform.rotation = Quaternion.LookRotation(moveDirection);
+            velocity.y = Mathf.Sqrt(jumpForce * 2f * gravity);
+            isJumping = false;
         }
+
+        velocity.y -= gravity * Time.deltaTime;
+
+        // Move the controller
+        controller.Move(velocity * Time.deltaTime);
     }
 
-    void FixedUpdate()
+    public void Jump()
     {
-        // Apply movement
-        if (moveDirection.magnitude >= 0.1f)
-        {
-            controller.Move(moveDirection * moveSpeed * Time.fixedDeltaTime);
-        }
+        isJumping = true;
     }
 }
