@@ -1,8 +1,10 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviourPun
 {
     [SerializeField] private Joystick movementJoystick;
     [SerializeField] private float moveSpeed = 5f;
@@ -16,10 +18,12 @@ public class PlayerMove : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        movementJoystick = FindFirstObjectByType<JoystickFinder>().gameObject.GetComponent<FixedJoystick>();
     }
 
     void Update()
     {
+<<<<<<< HEAD
 
         bool isGrounded = controller.isGrounded;
 
@@ -28,6 +32,15 @@ public class PlayerMove : MonoBehaviour
             velocity.y = -2f;
         }
 
+=======
+        if (photonView.IsMine)
+        {
+            MovePlayer();
+        }
+    }
+    void MovePlayer()
+    {
+>>>>>>> main
         // Get input from joystick
         float horizontalInput = movementJoystick.Horizontal;
         float verticalInput = movementJoystick.Vertical;
@@ -41,6 +54,7 @@ public class PlayerMove : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpForce * 2f * gravity);
             isJumping = false;
         }
+<<<<<<< HEAD
 
         velocity.y -= gravity * Time.deltaTime;
 
@@ -49,6 +63,21 @@ public class PlayerMove : MonoBehaviour
     }
 
     public void Jump()
+=======
+
+    }
+    public void SpeedBoost()
+    {
+        StartCoroutine(SpeedBoostCoroutine());
+    }
+    IEnumerator SpeedBoostCoroutine()
+    {
+        moveSpeed = 20f;
+        yield return new WaitForSeconds(5);
+        moveSpeed = 5f;
+    }
+    void FixedUpdate()
+>>>>>>> main
     {
         isJumping = true;
     }
