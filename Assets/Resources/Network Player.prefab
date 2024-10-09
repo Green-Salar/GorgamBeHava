@@ -226,6 +226,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementJoystick: {fileID: 0}
   moveSpeed: 5
+  jumpForce: 5
+  gravity: 10
+  jumpbtn: {fileID: 866161040262195619, guid: 861a006237a64fc42a85619d60798bec, type: 3}
 --- !u!143 &1211123476914338591
 CharacterController:
   m_ObjectHideFlags: 0
